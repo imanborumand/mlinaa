@@ -1,0 +1,29 @@
+version: '2'
+
+services:
+
+#  GO SERVICE
+  mlinaa-go-app:
+    container_name: "mlinaa-go-app"
+    tty: true
+    build:
+      context: .
+      dockerfile: go.dockerfile
+    env_file: './.env'
+    ports:
+      - "8080:8080"
+    networks:
+      - mlinaa-network
+    depends_on:
+      - mlinaa-mongo
+
+  #MONGO SERVICE
+  mlinaa-mongo:
+    container_name: "mlinaa-mongo"
+    image: mongo:latest
+    networks:
+      - mlinaa-network
+
+networks:
+  mlinaa-network:
+    driver: bridge
