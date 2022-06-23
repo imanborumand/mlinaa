@@ -1,4 +1,4 @@
-FROM golang:1.13.8
+FROM golang:1.18 as modules
 
 USER root
 
@@ -6,11 +6,21 @@ USER root
 ENV APP_NAME mlinaa
 ENV PORT 8080
 
-COPY . /go/src/${APP_NAME}
-WORKDIR /go/src/${APP_NAME}
-RUN go get .
-RUN go build -o main .
-RUN export GIN_MODE=release
-EXPOSE 8080
-# Run the executable
-CMD ["./main"]
+COPY go.mod go.sum /modules/
+WORKDIR /modules
+RUN go mod download
+
+# Step 2: Builder
+FROM golang:1.18 as builder
+COPY --from=modules /go/pkg /go/pkg
+COPY . /app
+WORKDIR /app
+RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 \
+    go build -tags migrate -o /bin/app ./cmd/app
+
+
+FROM scratch
+COPY --from=builder /app/config /config
+COPY --from=builder /bin/app /app
+COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
+CMD ["/app"]
