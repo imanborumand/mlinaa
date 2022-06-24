@@ -1,21 +1,20 @@
 package usecase
 
 import (
-	"context"
 	"mlinaa/internal/entity"
 )
 
 type (
 	LogInterface interface {
-		Set(ctx context.Context) (UniqueId string)
-		GetById()
+		Set(request entity.StoreRequestBody) (UniqueId string)
+		GetById(logId string) (log entity.Log)
 		List()
-		Forget()
+		Delete(logId string) (status bool)
 	}
 
 	LogRepo interface {
 		Store(log entity.Log) (status bool, err error)
-		Get(UniqueId string) (log entity.Log)
-		Delete(UniqueId string) (status bool, err error)
+		Get(uniqueId string) (log entity.Log)
+		Destroy(uniqueId string) (status bool)
 	}
 )

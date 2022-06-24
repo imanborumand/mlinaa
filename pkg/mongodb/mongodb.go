@@ -3,7 +3,8 @@ package mongodb
 import (
 	"fmt"
 	"gopkg.in/mgo.v2"
-	"os"
+	"log"
+	"mlinaa/config"
 	"time"
 )
 
@@ -16,14 +17,15 @@ const (
 )
 
 type Mongodb struct {
-	Builder *mgo.Session
+	Builder *mgo.Database
 }
 
 func New() (*Mongodb, error) {
-	//e := godotenv.Load() //Load .env file
-	//if e != nil {
-	//	panic(e)
-	//}
+
+	cfg, err := config.NewConfig()
+	if err != nil {
+		log.Fatalf("Config error: %s", err)
+	}
 
 	mongo := &Mongodb{}
 	Host := []string{
@@ -34,7 +36,7 @@ func New() (*Mongodb, error) {
 	info, err := mgo.DialWithInfo(&mgo.DialInfo{
 		Addrs:    Host,
 		Timeout:  60 * time.Second,
-		Database: os.Getenv("MONGO_DB_NAME"),
+		Database: cfg.MongoDatabase.Name,
 		//Username: username,
 		//Password: password,
 	})
@@ -43,7 +45,7 @@ func New() (*Mongodb, error) {
 		return nil, fmt.Errorf("mongodb - connAttempts == 0: %w", err)
 	}
 
-	mongo.Builder = info
+	mongo.Builder = info.DB(cfg.MongoDatabase.Name)
 
 	return mongo, nil
 }

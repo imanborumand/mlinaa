@@ -1,8 +1,10 @@
 package usecase
 
 import (
-	"context"
+	"fmt"
+	"github.com/rs/xid"
 	"mlinaa/internal/entity"
+	"strconv"
 	"time"
 )
 
@@ -16,30 +18,35 @@ func New(r LogRepo) *LogUseCase {
 	}
 }
 
-func (l LogUseCase) Set(ctx context.Context) string {
+func (l LogUseCase) Set(request entity.StoreRequestBody) string {
 
+	uniqueId := xid.New().String() + strconv.FormatInt(time.Now().UTC().UnixNano(), 10)
 	log := entity.Log{
-		RequestDate: "iman",
-		UniqueId:    "test",
+		Data:        request.Data,
+		UniqueId:    uniqueId,
 		RequestTime: time.Now(),
 	}
 
 	l.repo.Store(log)
 
-	return "df"
+	return uniqueId
 }
 
-func (l LogUseCase) GetById() {
-	//TODO implement me
-	panic("implement me")
+func (l LogUseCase) GetById(logId string) (log entity.Log) {
+	fmt.Println(logId)
+	return l.repo.Get(logId)
+}
+
+func (l LogUseCase) Delete(logId string) (status bool) {
+
+	if l.repo.Destroy(logId) {
+		return true
+	}
+
+	return false
 }
 
 func (l LogUseCase) List() {
-	//TODO implement me
-	panic("implement me")
-}
-
-func (l LogUseCase) Forget() {
 	//TODO implement me
 	panic("implement me")
 }

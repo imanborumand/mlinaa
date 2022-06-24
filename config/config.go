@@ -8,8 +8,9 @@ import (
 type (
 	// Config -.
 	Config struct {
-		App  `yaml:"app"`
-		HTTP `yaml:"http"`
+		App           `yaml:"app"`
+		HTTP          `yaml:"http"`
+		MongoDatabase `yaml:"MongoDatabase"`
 	}
 
 	// App -.
@@ -21,6 +22,11 @@ type (
 	// HTTP -.
 	HTTP struct {
 		Port string `env-required:"true" yaml:"port" env:"HTTP_PORT"`
+	}
+
+	// MongoDatabase -.
+	MongoDatabase struct {
+		Name string `env-required:"true" yaml:"name" env:"MONGO_DB_NAME"`
 	}
 )
 

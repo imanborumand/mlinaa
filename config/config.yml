@@ -4,3 +4,6 @@ app:
 
 http:
   port: '8080'
+
+MongoDatabase:
+  name: 'mlinaa'
