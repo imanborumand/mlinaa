@@ -1,12 +1,13 @@
 package router
 
 import (
+	"fmt"
 	"github.com/gin-gonic/gin"
-	"mlinaa/pkg/logger"
+	"mlinaa/internal/usecase"
 	"net/http"
 )
 
-func NewRouter(handler *gin.Engine, logger logger.Interface) {
+func NewRouter(handler *gin.Engine, log usecase.LogInterface) {
 	// Options
 	handler.Use(gin.Logger())
 	handler.Use(gin.Recovery())
@@ -16,6 +17,8 @@ func NewRouter(handler *gin.Engine, logger logger.Interface) {
 	})
 
 	handler.POST("/set", func(c *gin.Context) {
+		fmt.Println(log.Set(c))
+
 		c.Status(http.StatusOK)
 	})
 

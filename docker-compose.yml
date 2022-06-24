@@ -23,6 +23,8 @@ services:
     image: mongo:latest
     networks:
       - mlinaa-network
+    ports:
+      - "27017:27017"
 
 networks:
   mlinaa-network:
